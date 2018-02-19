@@ -1,10 +1,10 @@
-// Last change: 2018-02-14
+// Last change: 2018-02-18
 
 package com.sebastianbechtold.vectro
 
 var em = ManfredEcs()
 
-open class Component {
+open class ManfredComponent {
 
     var id : Long = 0
 }
@@ -14,14 +14,13 @@ class ManfredEcs {
 
     private var _deleteList = ArrayList<Long>()
 
-    private var _entities = HashMap<Long, HashMap<Any, Component>>()
+    private var _entities = HashMap<Long, HashMap<Any, ManfredComponent>>()
 
     private var nextId : Long = 0
 
-    private var _queryCache = HashMap<String, Set<Long>>()
+    private var _queryCache = HashMap<String, ArrayList<Long>>()
 
     private var _useCache = true
-
 
     fun getUnusedId(): Long {
         return nextId++
@@ -30,7 +29,7 @@ class ManfredEcs {
 
     fun <T> getComponent(id: Long, compClass: Class<T>): T? {
 
-        var entity : HashMap<Any,Component>? = _entities.get(id)
+        var entity : HashMap<Any, ManfredComponent>? = _entities.get(id)
 
         if (entity == null) {
             return null
@@ -46,12 +45,14 @@ class ManfredEcs {
         }
 
         _deleteList.clear()
+
+    //    println(_entities.size)
     }
 
-    
-    fun getEntitiesWith(vararg compClasses: Class<*>): Set<Long> {
 
-        var result = HashSet<Long>()
+    fun getEntitiesWith(vararg compClasses: Class<*>): ArrayList<Long> {
+
+        var result = ArrayList<Long>()
 
         //############## BEGIN Cache lookup #############
         // Build cache key:
@@ -126,9 +127,7 @@ class ManfredEcs {
         entity.remove(compClass)
 
         clearCache(compClass);
-
-        // TODO: 3 Fire component replaced event?
-
+        
         if (entity.isEmpty()) {
             removeEntity(id)
         }
@@ -139,14 +138,14 @@ class ManfredEcs {
 
     }
 
-    fun setComponent(id: Long, comp: Component) {
+    fun setComponent(id: Long, comp: ManfredComponent) {
 
         var entity = _entities.get(id);
 
-        var prevComp : Component? = null
+        var prevComp : ManfredComponent? = null
 
         if (entity == null) {
-            entity = HashMap<Any, Component>()
+            entity = HashMap<Any, ManfredComponent>()
             _entities.set(id, entity)
         }
         else {
