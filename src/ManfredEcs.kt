@@ -21,7 +21,7 @@ class ManfredEcs {
 
     private var _nextId: Long = 0
     private var _queryCache = HashMap<String, ArrayList<Long>>()
-    private var _useCache = false
+    private var _useCache = true
 
 
     fun getUnusedId(): Long {
@@ -145,7 +145,7 @@ class ManfredEcs {
         componentsToRemove.addAll(entity.values)
 
         for (comp in componentsToRemove) {
-            removeComponent(id, comp.javaClass)
+            removeComponent(id, comp::class.java)
         }
 
         _deleteList.add(id)
@@ -169,7 +169,8 @@ class ManfredEcs {
         entity.set(comp::class.java, comp)
 
         if (_useCache && prevComp == null) {
-            clearCache(comp.javaClass)
+        // (_useCache) {
+            clearCache(comp::class.java)
         }
     }
 }
