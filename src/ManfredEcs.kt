@@ -76,6 +76,10 @@ class ManfredEcs {
         var entity = entities[id]
         if (entity == null) return
 
+        // TODO: 2 Maybe not remove components immediately.
+        // Instead, create a delete list and do the actual removal in "finish()", just like with entities.
+        // This needs further testing. sbecht 2018-03-18
+
         entity.remove(compClass)
 
         if (entity.isEmpty()) {
@@ -90,7 +94,10 @@ class ManfredEcs {
 
         if (entity == null) return
 
-        entity.clear()
+        // ATTENTION:
+        // entity.clear() must NOT BE CALLED here! Reason: "getEntitiesWith()" returns a list of entity IDs, and if
+        // removeEntity() is called within a loop over such a list (i.e. typical "system" behaviour),
+        // the list becomes invalid. sbecht 2018-03-18
 
         _deleteList.add(id)
     }
