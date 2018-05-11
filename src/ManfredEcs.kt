@@ -2,8 +2,6 @@
 
 package com.sebastianbechtold.vectro
 
-var em = ManfredEntityList()
-
 abstract class ManfredComponent {
 
     open fun onRemove() {
@@ -11,29 +9,40 @@ abstract class ManfredComponent {
     }
 }
 
+
 class ManfredEntity {
 
-    internal var components = HashMap<Any, ManfredComponent>()
+    private var _components = HashMap<Any, ManfredComponent>()
+
 
     fun <T> getComponent(compClass: Class<T>): T? {
-        return components[compClass] as T?
+        return _components[compClass] as T?
     }
 
 
     fun <T> removeComponent(compClass: Class<T>) {
 
-        var comp  = components.get(compClass)
+        var comp  = _components.get(compClass)
 
         if (comp == null) return
 
         comp.onRemove()
 
-        components.remove(compClass)
+        _components.remove(compClass)
+    }
+
+
+    fun removeAllComponents() {
+        for(comp in _components.values) {
+            comp.onRemove()
+        }
+
+        _components.clear()
     }
 
 
     fun setComponent(comp: ManfredComponent) {
-        components.set(comp::class.java, comp)
+        _components.set(comp::class.java, comp)
     }
 }
 
@@ -48,11 +57,9 @@ class ManfredEntityList : Iterable<ManfredEntity> {
     }
 
 
-    fun deleteEntity(entity: ManfredEntity) {
+    fun destroyEntity(entity: ManfredEntity) {
 
-        for(comp in entity.components.values) {
-            comp.onRemove()
-        }
+        entity.removeAllComponents()
 
         _entities.remove(entity)
     }
@@ -69,7 +76,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
             for (compClass in compClasses) {
 
-                if (!entity.components.containsKey(compClass)) {
+                if (entity.getComponent(compClass) == null) {
                     allIn = false;
                     break;
                 }
@@ -97,6 +104,13 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         _entities.add(entity)
 
         return entity
+    }
+
+
+    fun removeEntity(entity: ManfredEntity) {
+
+        // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
+        _entities.remove(entity)
     }
 }
 
