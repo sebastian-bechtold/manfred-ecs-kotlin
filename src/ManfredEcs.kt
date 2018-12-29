@@ -1,6 +1,6 @@
 // Last change: 2018-05-11
 
-package com.sebastianbechtold.vectro
+package com.sebastianbechtold.manfred
 
 abstract class ManfredComponent {
 
@@ -15,8 +15,8 @@ class ManfredEntity {
     private var _components = HashMap<Any, ManfredComponent>()
 
 
-    fun <T> getComponent(compClass: Class<T>): T? {
-        return _components[compClass] as T?
+    fun <T> getComponent(compClass: Class<T>): T {
+        return _components[compClass] as T
     }
 
 
