@@ -1,6 +1,6 @@
-// Last change: 2018-05-11
+// Last change: 2018-12-29
 
-package com.sebastianbechtold.vectro
+package com.sebastianbechtold.manfred
 
 abstract class ManfredComponent {
 
@@ -15,8 +15,8 @@ class ManfredEntity {
     private var _components = HashMap<Any, ManfredComponent>()
 
 
-    fun <T> getComponent(compClass: Class<T>): T? {
-        return _components[compClass] as T?
+    fun <T> getComponent(compClass: Class<T>): T {
+        return _components[compClass] as T
     }
 
 
@@ -51,6 +51,10 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     private var _entities = HashSet<ManfredEntity>()
 
+    val size : Int
+    get() {
+        return _entities.size
+    }
 
     fun addEntity(entity : ManfredEntity) {
         _entities.add(entity)
@@ -112,5 +116,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
     }
+
+
 }
 
