@@ -1,18 +1,16 @@
-// Last change: 2018-12-29
+// Last change: 2019-01-04
 
 package com.sebastianbechtold.manfred
 
-abstract class ManfredComponent {
+interface IManfredComponent {
 
-    open fun onRemove() {
-
-    }
+    fun onRemove();
 }
 
 
 class ManfredEntity {
 
-    private var _components = HashMap<Any, ManfredComponent>()
+    private var _components = HashMap<Any, IManfredComponent>()
 
 
     fun <T> getComponent(compClass: Class<T>): T {
@@ -22,7 +20,7 @@ class ManfredEntity {
 
     fun <T> removeComponent(compClass: Class<T>) {
 
-        var comp  = _components.get(compClass)
+        var comp = _components.get(compClass)
 
         if (comp == null) return
 
@@ -33,7 +31,7 @@ class ManfredEntity {
 
 
     fun removeAllComponents() {
-        for(comp in _components.values) {
+        for (comp in _components.values) {
             comp.onRemove()
         }
 
@@ -41,7 +39,7 @@ class ManfredEntity {
     }
 
 
-    fun setComponent(comp: ManfredComponent) {
+    fun setComponent(comp: IManfredComponent) {
         _components.set(comp::class.java, comp)
     }
 }
@@ -51,12 +49,13 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     private var _entities = HashSet<ManfredEntity>()
 
-    val size : Int
-    get() {
-        return _entities.size
-    }
+    val size: Int
+        get() {
+            return _entities.size
+        }
 
-    fun addEntity(entity : ManfredEntity) {
+
+    fun add(entity: ManfredEntity) {
         _entities.add(entity)
     }
 
@@ -79,7 +78,6 @@ class ManfredEntityList : Iterable<ManfredEntity> {
             var allIn = true
 
             for (compClass in compClasses) {
-
                 if (entity.getComponent(compClass) == null) {
                     allIn = false;
                     break;
@@ -101,17 +99,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
     }
 
 
-    fun newEntity() : ManfredEntity {
-
-        var entity = ManfredEntity()
-
-        _entities.add(entity)
-
-        return entity
-    }
-
-
-    fun removeEntity(entity: ManfredEntity) {
+    fun remove(entity: ManfredEntity) {
 
         // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
