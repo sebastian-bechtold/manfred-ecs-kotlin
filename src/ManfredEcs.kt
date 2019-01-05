@@ -1,11 +1,8 @@
-// Last change: 2019-01-04
+// Last change: 2019-01-05
 
 package com.sebastianbechtold.manfred
 
-import com.sebastianbechtold.wanderer.components.ManfredComponent
-
 interface IManfredComponent {
-
     fun onRemove();
 }
 
@@ -14,7 +11,7 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
     private var _components = HashMap<Any, IManfredComponent>()
 
-
+    
     fun <T> getComponent(compClass: Class<T>): T {
         return _components[compClass] as T
     }
@@ -22,6 +19,15 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
     override fun iterator(): Iterator<IManfredComponent> {
         return _components.values.iterator()
+    }
+
+
+    fun removeAllComponents() {
+        for (comp in _components.values) {
+            comp.onRemove()
+        }
+
+        _components.clear()
     }
 
 
@@ -34,15 +40,6 @@ class ManfredEntity : Iterable<IManfredComponent> {
         comp.onRemove()
 
         _components.remove(compClass)
-    }
-
-
-    fun removeAllComponents() {
-        for (comp in _components.values) {
-            comp.onRemove()
-        }
-
-        _components.clear()
     }
 
 
@@ -64,14 +61,6 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     fun add(entity: ManfredEntity) {
         _entities.add(entity)
-    }
-
-
-    fun destroyEntity(entity: ManfredEntity) {
-
-        entity.removeAllComponents()
-
-        _entities.remove(entity)
     }
 
 
@@ -111,7 +100,5 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
     }
-
-
 }
 
