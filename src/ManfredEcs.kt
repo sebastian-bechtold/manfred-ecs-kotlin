@@ -2,19 +2,26 @@
 
 package com.sebastianbechtold.manfred
 
+import com.sebastianbechtold.wanderer.components.ManfredComponent
+
 interface IManfredComponent {
 
     fun onRemove();
 }
 
 
-class ManfredEntity {
+class ManfredEntity : Iterable<IManfredComponent> {
 
     private var _components = HashMap<Any, IManfredComponent>()
 
 
     fun <T> getComponent(compClass: Class<T>): T {
         return _components[compClass] as T
+    }
+
+
+    override fun iterator(): Iterator<IManfredComponent> {
+        return _components.values.iterator()
     }
 
 
