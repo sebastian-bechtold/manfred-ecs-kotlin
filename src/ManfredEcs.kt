@@ -11,7 +11,7 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
     private var _components = HashMap<Any, IManfredComponent>()
 
-    
+
     fun <T> getComponent(compClass: Class<T>): T {
         return _components[compClass] as T
     }
@@ -63,6 +63,9 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         _entities.add(entity)
     }
 
+    fun clear() {
+        _entities.clear()
+    }
 
     fun getEntitiesWith(vararg compClasses: Class<*>): ManfredEntityList {
 
