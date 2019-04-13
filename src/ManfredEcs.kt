@@ -1,9 +1,22 @@
-// Last change: 2019-01-05
+// Last change: 2019-04-08
 
 package com.sebastianbechtold.manfred
 
+
+// IManfredComponent is the interface for components that is used in ManfredEntity
+// and ManfredEntityList. The class 'ManfredComponent' is a minimal implementation
+// that can be used as a base class for derived component classes that don't need
+// to have their own implementation of the onRemove() method.
+
 interface IManfredComponent {
     fun onRemove();
+}
+
+
+open class ManfredComponent : IManfredComponent {
+    override fun onRemove() {
+
+    }
 }
 
 
@@ -71,7 +84,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
         var result = ManfredEntityList()
 
-        //############# BEGIN Find all _entities that have the specified components ###########
+        //############# BEGIN Find all entities that have the specified components ###########
         for (entity in _entities) {
 
             var allIn = true
@@ -87,7 +100,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
                 result._entities.add(entity)
             }
         }
-        //############# END Find all _entities that have the specified components ###########
+        //############# END Find all entities that have the specified components ###########
 
         return result
     }
@@ -100,7 +113,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     fun remove(entity: ManfredEntity) {
 
-        // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
+        // ATTENTION: Just removing an target from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
     }
 }
