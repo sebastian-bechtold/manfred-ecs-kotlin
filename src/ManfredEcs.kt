@@ -1,4 +1,6 @@
-// Last change: 2019-04-08
+
+
+// Last change: 2019-09-07
 
 package com.sebastianbechtold.manfred
 
@@ -8,16 +10,7 @@ package com.sebastianbechtold.manfred
 // that can be used as a base class for derived component classes that don't need
 // to have their own implementation of the onRemove() method.
 
-interface IManfredComponent {
-    fun onRemove();
-}
-
-
-open class ManfredComponent : IManfredComponent {
-    override fun onRemove() {
-
-    }
-}
+interface IManfredComponent {}
 
 
 class ManfredEntity : Iterable<IManfredComponent> {
@@ -36,9 +29,6 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
 
     fun removeAllComponents() {
-        for (comp in _components.values) {
-            comp.onRemove()
-        }
 
         _components.clear()
     }
@@ -49,8 +39,6 @@ class ManfredEntity : Iterable<IManfredComponent> {
         var comp = _components.get(compClass)
 
         if (comp == null) return
-
-        comp.onRemove()
 
         _components.remove(compClass)
     }
@@ -64,7 +52,7 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
 class ManfredEntityList : Iterable<ManfredEntity> {
 
-    private var _entities = HashSet<ManfredEntity>()
+    private var _entities = ArrayList<ManfredEntity>()
 
     val size: Int
         get() {
@@ -73,12 +61,19 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
 
     fun add(entity: ManfredEntity) {
+
+        if (_entities.contains(entity)) {
+            return
+        }
+
         _entities.add(entity)
     }
 
     fun clear() {
         _entities.clear()
     }
+
+
 
     fun getEntitiesWith(vararg compClasses: Class<*>): ManfredEntityList {
 
