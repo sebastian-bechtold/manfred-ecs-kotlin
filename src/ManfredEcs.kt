@@ -1,9 +1,6 @@
-
-
-// Last change: 2019-09-07
+// Last change: 2020-01-19
 
 package com.sebastianbechtold.manfred
-
 
 // IManfredComponent is the interface for components that is used in ManfredEntity
 // and ManfredEntityList. The class 'ManfredComponent' is a minimal implementation
@@ -29,7 +26,6 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
 
     fun removeAllComponents() {
-
         _components.clear()
     }
 
@@ -47,11 +43,13 @@ class ManfredEntity : Iterable<IManfredComponent> {
     fun setComponent(comp: IManfredComponent) {
         _components.set(comp::class.java, comp)
     }
+
 }
 
 
 class ManfredEntityList : Iterable<ManfredEntity> {
 
+    // NOTE: It is faster with ArrayList than with HashSet!
     private var _entities = ArrayList<ManfredEntity>()
 
     val size: Int
@@ -69,10 +67,10 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         _entities.add(entity)
     }
 
+    
     fun clear() {
         _entities.clear()
     }
-
 
 
     fun getEntitiesWith(vararg compClasses: Class<*>): ManfredEntityList {
@@ -108,7 +106,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     fun remove(entity: ManfredEntity) {
 
-        // ATTENTION: Just removing an target from a ManfredEntityList does not destroy it!
+        // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
     }
 }
