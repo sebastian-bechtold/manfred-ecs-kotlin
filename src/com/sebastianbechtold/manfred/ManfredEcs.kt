@@ -1,4 +1,4 @@
-// Last change: 2020-01-19
+// Last change: 2020-09-12
 
 package com.sebastianbechtold.manfred
 
@@ -7,7 +7,16 @@ package com.sebastianbechtold.manfred
 // that can be used as a base class for derived component classes that don't need
 // to have their own implementation of the onRemove() method.
 
-interface IManfredComponent {}
+interface IManfredComponent {
+    fun onRemove();
+}
+
+
+open class ManfredComponent : IManfredComponent {
+    override fun onRemove() {
+
+    }
+}
 
 
 class ManfredEntity : Iterable<IManfredComponent> {
@@ -26,6 +35,10 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
 
     fun removeAllComponents() {
+        for (comp in _components.values) {
+            comp.onRemove()
+        }
+
         _components.clear()
     }
 
@@ -36,21 +49,22 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
         if (comp == null) return
 
+        comp.onRemove()
+
         _components.remove(compClass)
     }
 
 
-    fun setComponent(comp: IManfredComponent) {
+    fun setComponent(comp: IManfredComponent) : IManfredComponent {
         _components.set(comp::class.java, comp)
+        return comp
     }
-
 }
 
 
 class ManfredEntityList : Iterable<ManfredEntity> {
 
-    // NOTE: It is faster with ArrayList than with HashSet!
-    private var _entities = ArrayList<ManfredEntity>()
+    private var _entities = HashSet<ManfredEntity>()
 
     val size: Int
         get() {
@@ -59,19 +73,12 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
 
     fun add(entity: ManfredEntity) {
-
-        if (_entities.contains(entity)) {
-            return
-        }
-
         _entities.add(entity)
     }
 
-    
     fun clear() {
         _entities.clear()
     }
-
 
     fun getEntitiesWith(vararg compClasses: Class<*>): ManfredEntityList {
 
@@ -106,7 +113,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
     fun remove(entity: ManfredEntity) {
 
-        // ATTENTION: Just removing an entity from a ManfredEntityList does not destroy it!
+        // ATTENTION: Just removing an target from a ManfredEntityList does not destroy it!
         _entities.remove(entity)
     }
 }
