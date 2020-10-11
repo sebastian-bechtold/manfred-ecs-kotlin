@@ -1,6 +1,10 @@
-// Last change: 2020-09-12
+// Last change: 2020-09-19
 
 package com.sebastianbechtold.manfred
+
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 // IManfredComponent is the interface for components that is used in ManfredEntity
 // and ManfredEntityList. The class 'ManfredComponent' is a minimal implementation
@@ -19,9 +23,10 @@ open class ManfredComponent : IManfredComponent {
 }
 
 
-class ManfredEntity : Iterable<IManfredComponent> {
+class ManfredEntity(val uuid : String = UUID.randomUUID().toString()) : Iterable<IManfredComponent> {
 
-    private var _components = HashMap<Any, IManfredComponent>()
+    private val _components = HashMap<Any, IManfredComponent>()
+
 
 
     fun <T> getComponent(compClass: Class<T>): T {
@@ -64,7 +69,7 @@ class ManfredEntity : Iterable<IManfredComponent> {
 
 class ManfredEntityList : Iterable<ManfredEntity> {
 
-    private var _entities = HashSet<ManfredEntity>()
+    private val _entities = HashSet<ManfredEntity>()
 
     val size: Int
         get() {
@@ -103,6 +108,17 @@ class ManfredEntityList : Iterable<ManfredEntity> {
         //############# END Find all entities that have the specified components ###########
 
         return result
+    }
+
+
+    fun getEntityByUuid(uuid : String) : ManfredEntity? {
+        for(entity in _entities) {
+            if (entity.uuid.toString() == uuid) {
+                return entity
+            }
+        }
+
+        return null
     }
 
 
