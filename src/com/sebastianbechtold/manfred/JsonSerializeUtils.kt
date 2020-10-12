@@ -1,10 +1,35 @@
 package com.sebastianbechtold.manfred
 
-import com.sebastianbechtold.SerializableManfredComponent
 import org.json.simple.JSONObject
 
 
 interface IPersistComponent
+
+
+abstract class SerializableManfredComponent : ManfredComponent() {
+
+    var json = JSONObject()
+
+    open fun copy() : SerializableManfredComponent {
+
+        val result = this.javaClass.getDeclaredConstructor().newInstance()
+
+        result.load(this.toJson())
+        return result
+    }
+
+    open fun toJson() : JSONObject {
+        return JSONObject()
+    }
+
+    open fun load(aJson : JSONObject) {
+        json = aJson
+    }
+
+    open fun initialize(gel : ManfredEntityList, entity : ManfredEntity?) {
+
+    }
+}
 
 fun entityFromJson(uuid: String, entityJson: JSONObject): ManfredEntity {
 

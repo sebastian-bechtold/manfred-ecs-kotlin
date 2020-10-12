@@ -1,6 +1,5 @@
 package com.sebastianbechtold.manfred
 
-import com.sebastianbechtold.SerializableManfredComponent
 import org.json.simple.JSONObject
 
 interface IPrototypeComponent
