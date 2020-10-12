@@ -1,9 +1,12 @@
 package com.sebastianbechtold.manfred
 
-import com.sebastianbechtold.ISerializableManfredComponent
+import com.sebastianbechtold.SerializableManfredComponent
 import org.json.simple.JSONObject
 
-fun instantiate(uuid: String, entityJson: JSONObject, prototypes: HashMap<String, IManfredComponent>): ManfredEntity {
+
+interface IPersistComponent
+
+fun entityFromJson(uuid: String, entityJson: JSONObject): ManfredEntity {
 
     var result = ManfredEntity(uuid)
 
@@ -23,26 +26,16 @@ fun instantiate(uuid: String, entityJson: JSONObject, prototypes: HashMap<String
 
         var componentJson = entityJson[className] as JSONObject
 
-        var prototypeKey = componentJson["prototype"]
 
-        if (prototypeKey != null) {
-            var prototype = prototypes[prototypeKey]
-            if (prototype != null) {
-                result.setComponent(prototype)
-            } else {
-                println("Prototype component not found: " + prototypeKey)
-            }
-        } else {
-            try {
-                val component = c.getDeclaredConstructor().newInstance() as ISerializableManfredComponent
+        try {
+            val component = c.getDeclaredConstructor().newInstance() as SerializableManfredComponent
 
-                component.load(componentJson)
+            component.load(componentJson)
 
-                result.setComponent(component as IManfredComponent)
+            result.setComponent(component as IManfredComponent)
 
-            } catch (e: java.lang.Exception) {
-                println("Failed to instantiate component: " + className)
-            }
+        } catch (e: java.lang.Exception) {
+            println("Failed to instantiate component: " + className + ". Reason: " + e.message)
         }
     }
 
@@ -50,13 +43,13 @@ fun instantiate(uuid: String, entityJson: JSONObject, prototypes: HashMap<String
 }
 
 
-fun entitiesFromJson(entitiesJson: JSONObject, prototypes: HashMap<String, IManfredComponent>): ManfredEntityList? {
+fun entitiesFromJson(entitiesJson: JSONObject): ManfredEntityList? {
 
     var result = ManfredEntityList()
 
     //################### BEGIN Load entities ###################
     for (kvp in entitiesJson as JSONObject) {
-        result.add(instantiate(kvp.key as String, kvp.value as JSONObject, prototypes))
+        result.add(entityFromJson(kvp.key as String, kvp.value as JSONObject))
     }
     //################### END Load entities ###################
 
@@ -72,7 +65,7 @@ fun entitiesToJson(entities: ManfredEntityList): JSONObject {
         var entityJson = JSONObject()
 
         for (comp in entity) {
-            if (comp is ISerializableManfredComponent) {
+            if (comp is SerializableManfredComponent && comp is IPersistComponent) {
                 entityJson[comp.javaClass.canonicalName] = comp.toJson()
             }
         }

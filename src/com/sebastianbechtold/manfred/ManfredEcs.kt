@@ -1,5 +1,7 @@
 // Last change: 2020-09-19
 
+// TODO: 3 Change ManfredEntityList to use a HasSet<uuid, entity>?
+
 package com.sebastianbechtold.manfred
 
 import java.util.*
@@ -26,7 +28,6 @@ open class ManfredComponent : IManfredComponent {
 class ManfredEntity(val uuid : String = UUID.randomUUID().toString()) : Iterable<IManfredComponent> {
 
     private val _components = HashMap<Any, IManfredComponent>()
-
 
 
     fun <T> getComponent(compClass: Class<T>): T {
