@@ -1,12 +1,9 @@
-// Last change: 2020-09-19
-
-// TODO: 3 Change ManfredEntityList to use a HasSet<uuid, entity>?
+// Last change: 2020-10-18
 
 package com.sebastianbechtold.manfred
 
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 // IManfredComponent is the interface for components that is used in ManfredEntity
 // and ManfredEntityList. The class 'ManfredComponent' is a minimal implementation
@@ -40,15 +37,6 @@ class ManfredEntity(val uuid : String = UUID.randomUUID().toString()) : Iterable
     }
 
 
-    fun removeAllComponents() {
-        for (comp in _components.values) {
-            comp.onRemove()
-        }
-
-        _components.clear()
-    }
-
-
     fun <T> removeComponent(compClass: Class<T>) {
 
         var comp = _components.get(compClass)
@@ -70,7 +58,7 @@ class ManfredEntity(val uuid : String = UUID.randomUUID().toString()) : Iterable
 
 class ManfredEntityList : Iterable<ManfredEntity> {
 
-    private val _entities = HashSet<ManfredEntity>()
+    private val _entities = HashMap<String, ManfredEntity>()
 
     val size: Int
         get() {
@@ -79,19 +67,21 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
 
     fun add(entity: ManfredEntity) {
-        _entities.add(entity)
+        _entities.put(entity.uuid, entity)
     }
+
 
     fun clear() {
         _entities.clear()
     }
+
 
     fun getEntitiesWith(vararg compClasses: Class<*>): ManfredEntityList {
 
         var result = ManfredEntityList()
 
         //############# BEGIN Find all entities that have the specified components ###########
-        for (entity in _entities) {
+        for (entity in _entities.values) {
 
             var allIn = true
 
@@ -103,7 +93,7 @@ class ManfredEntityList : Iterable<ManfredEntity> {
             }
 
             if (allIn) {
-                result._entities.add(entity)
+                result.add(entity)
             }
         }
         //############# END Find all entities that have the specified components ###########
@@ -113,25 +103,24 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
 
     fun getEntityByUuid(uuid : String) : ManfredEntity? {
-        for(entity in _entities) {
-            if (entity.uuid.toString() == uuid) {
-                return entity
-            }
-        }
-
-        return null
+        return _entities.get(uuid)
     }
 
 
     override fun iterator(): Iterator<ManfredEntity> {
-        return _entities.iterator()
+        return _entities.values.iterator()
     }
 
 
     fun remove(entity: ManfredEntity) {
 
         // ATTENTION: Just removing an target from a ManfredEntityList does not destroy it!
-        _entities.remove(entity)
+        _entities.remove(entity.uuid)
+    }
+
+
+    fun removeByUuid(uuid : String) {
+        _entities.remove(uuid)
     }
 }
 
