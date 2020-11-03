@@ -1,6 +1,7 @@
 package com.sebastianbechtold.manfred
 
 import org.json.simple.JSONObject
+import java.io.FileReader
 
 interface IPrototypeComponent
 
@@ -34,3 +35,43 @@ fun applyPrototype(entity : ManfredEntity, prototype : ManfredEntity) {
         }
     }
 }
+
+
+
+fun loadPrototypes(prototypesFilePath : String) : ManfredEntityList? {
+
+    var result = ManfredEntityList()
+
+    var parser = org.json.simple.parser.JSONParser()
+
+    var prototypeJson: JSONObject? = null
+
+
+    try {
+        val fileReader = FileReader(prototypesFilePath)
+
+        prototypeJson = parser.parse(fileReader) as JSONObject
+    } catch (e: Exception) {
+        print("Failed to read entity prototype definitions file")
+        return null
+    }
+
+
+    var p = entitiesFromJson(prototypeJson)
+
+    if (p != null) {
+        for (entity in p) {
+
+            var json = JSONObject()
+            json["prototype"] = entity.uuid
+            var pc = PrototypeRefComponent()
+            pc.load(json)
+            entity.setComponent(pc)
+
+            result.add(entity)
+        }
+    }
+
+    return result
+}
+

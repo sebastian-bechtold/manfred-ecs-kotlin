@@ -26,8 +26,9 @@ abstract class SerializableManfredComponent : ManfredComponent() {
         json = aJson
     }
 
-    open fun initialize(gel : ManfredEntityList, entity : ManfredEntity?) {
+    open fun initialize(gel : ManfredEntityList, entity : ManfredEntity?) : Boolean {
 
+        return true
     }
 }
 

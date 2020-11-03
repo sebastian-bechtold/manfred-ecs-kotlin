@@ -67,7 +67,15 @@ class ManfredEntityList : Iterable<ManfredEntity> {
 
 
     fun add(entity: ManfredEntity) {
+        // TODO: 1 What to do if entity ID already exists?
         _entities.put(entity.uuid, entity)
+    }
+
+
+    fun addAll(others : ManfredEntityList) {
+        for(entity in others) {
+            add(entity)
+        }
     }
 
 
