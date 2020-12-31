@@ -10,7 +10,7 @@ abstract class SerializableManfredComponent : ManfredComponent() {
 
     var json = JSONObject()
 
-    open fun copy() : SerializableManfredComponent {
+    open fun copy(): SerializableManfredComponent {
 
         val result = this.javaClass.getDeclaredConstructor().newInstance()
 
@@ -18,19 +18,20 @@ abstract class SerializableManfredComponent : ManfredComponent() {
         return result
     }
 
-    open fun toJson() : JSONObject {
+    open fun toJson(): JSONObject {
         return JSONObject()
     }
 
-    open fun load(aJson : JSONObject) {
+    open fun load(aJson: JSONObject) {
         json = aJson
     }
 
-    open fun initialize(gel : ManfredEntityList, entity : ManfredEntity?) : Boolean {
+    open fun initialize(gel: ManfredEntityList, entity: ManfredEntity?): Boolean {
 
         return true
     }
 }
+
 
 fun entityFromJson(uuid: String, entityJson: JSONObject): ManfredEntity {
 

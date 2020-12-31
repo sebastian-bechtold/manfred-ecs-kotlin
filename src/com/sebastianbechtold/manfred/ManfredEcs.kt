@@ -53,6 +53,10 @@ class ManfredEntity(val uuid : String = UUID.randomUUID().toString()) : Iterable
         _components.set(comp::class.java, comp)
         return comp
     }
+
+    override fun toString() : String {
+        return uuid
+    }
 }
 
 
